@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Editor</title>
+    <style>
+        body {
+            background-color: #121212; /* Темный фон */
+            color: #e0e0e0; /* Светлый текст */
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        textarea {
+            width: 96%;
+            height: 10%;
+            background-color: #2a2a2a; /* Тёмный фон для текстового поля */
+            color: #e0e0e0; /* Светлый цвет текста */
+            border: 1px solid #444; /* Легкая граница */
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 16px;
+            resize: none;
+            outline: none;
+        }
+
+            textarea::placeholder {
+                color: #aaa; /* Цвет плейсхолдера */
+            }
+
+            /* При фокусе поле будет подсвечиваться */
+            textarea:focus {
+                border-color: #6200ea;
+            }
+    </style>
+    <script>
+        function setTextFromCSharp(text) {
+            document.getElementById("editor").value = text;
+        }
+    </script>
+
+    <script>
+        function sendTextToWpf() {
+            let text = document.getElementById("editor").value;
+            window.chrome.webview.postMessage(text);
+        }
+    </script>
+</head>
+<body>
+    <textarea id="editor" rows="10" cols="30" placeholder="Ввод данных в браузер..." oninput="sendTextToWpf"></textarea>
+</body>
+</html>

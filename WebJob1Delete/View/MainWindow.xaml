@@ -1,0 +1,54 @@
+﻿<Window x:Class="WebJob1Delete.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="clr-namespace:WebJob1Delete"
+    xmlns:webview2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+    mc:Ignorable="d"
+    Title="MainWindow" Height="450" Width="800" WindowStartupLocation="CenterScreen">
+
+    <Grid Background="CornflowerBlue">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <webview2:WebView2 Name="WebViewControl"
+                           Grid.Row="0" Grid.ColumnSpan="1"/>
+
+        <TextBox x:Name="UserInput" 
+                 Background="DarkGreen" 
+                 Grid.Row="1" Grid.ColumnSpan="1"
+                 Text="{Binding TextInTextBox, UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBlock x:Name="PlaceholderWpf" 
+                   Text="Введите данные в WPF" 
+                   Grid.Row="1" Grid.ColumnSpan="1"
+                   IsHitTestVisible="False"
+                   Visibility="{Binding TextInTextBox, Converter={StaticResource PlaceholderConverter}}"/>
+
+        <TextBlock x:Name="WebOutput" 
+                   Background="#0b65b4" 
+                   Grid.Row="2" Grid.ColumnSpan="1"
+                   Text="{Binding TextInTextBlock, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <StackPanel Grid.Row="3" Grid.ColumnSpan="1" Orientation="Horizontal" HorizontalAlignment="Stretch">
+            <Button x:Name="WebToWpf" 
+                    Content="Из браузера в WPF" 
+                    HorizontalAlignment="Stretch"
+                    Margin="5"
+                    Command="{Binding SendTextToWpf}"/>
+            <Button x:Name="WpfToWeb" 
+                    Content="Из WPF в браузер" 
+                    HorizontalAlignment="Stretch" 
+                    Margin="5"
+                    Command="{Binding SendTextToWebView}"/>     
+        </StackPanel>
+
+    </Grid>
+</Window>
