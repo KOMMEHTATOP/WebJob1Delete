@@ -5,19 +5,28 @@
     <title>Editor</title>
     <style>
         body {
-            background-color: #121212; /* Темный фон */
-            color: #e0e0e0; /* Светлый текст */
+            background-color: #121212;
+            color: #e0e0e0;
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
+            display: flex;
+            height: 100vh;
+        }
+
+        .editor-container {
+            width: 50%;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
         }
 
         textarea {
-            width: 96%;
-            height: 10%;
-            background-color: #2a2a2a; /* Тёмный фон для текстового поля */
-            color: #e0e0e0; /* Светлый цвет текста */
-            border: 1px solid #444; /* Легкая граница */
+            flex-grow: 1;
+            width: 100%;
+            background-color: #2a2a2a;
+            color: #e0e0e0;
+            border: 1px solid #444;
             border-radius: 5px;
             padding: 10px;
             font-size: 16px;
@@ -25,29 +34,59 @@
             outline: none;
         }
 
-            textarea::placeholder {
-                color: #aaa; /* Цвет плейсхолдера */
-            }
+        .console-container {
+            width: 50%;
+            padding: 10px;
+            background-color: #1e1e1e;
+            display: flex;
+            flex-direction: column;
+        }
 
-            /* При фокусе поле будет подсвечиваться */
-            textarea:focus {
-                border-color: #6200ea;
-            }
+        #consoleOutput {
+            flex-grow: 1;
+            background: black;
+            color: limegreen;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 14px;
+            overflow-y: auto;
+            border-left: 2px solid #444;
+        }
     </style>
+
+</head>
+<body>
+    <div class="editor-container">
+        <textarea id="editor" rows="10" cols="30" placeholder="Ввод данных в браузер..."></textarea>
+    </div>
+    <div class="console-container">
+        <div id="consoleOutput"></div>
+    </div>
     <script>
         function setTextFromCSharp(text) {
-            document.getElementById("editor").value = text;
+            let editor = document.getElementById("editor");
+            editor.value = text;
         }
-    </script>
 
-    <script>
+        // Функция, отправляющая текст обратно в C#
         function sendTextToWpf() {
             let text = document.getElementById("editor").value;
             window.chrome.webview.postMessage(text);
         }
+
+        function logToConsole(msg) {
+            let consoleDiv = document.getElementById("consoleOutput");
+            consoleDiv.innerHTML += `<p>${msg}</p>`;
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        }
+
+        document.getElementById("editor").addEventListener("input", function () {
+            sendTextToWpf();
+        })
+
+        window.onload = function () {
+            logToConsole("[INFO] Консоль загружена...");
+        };
     </script>
-</head>
-<body>
-    <textarea id="editor" rows="10" cols="30" placeholder="Ввод данных в браузер..." oninput="sendTextToWpf"></textarea>
 </body>
 </html>

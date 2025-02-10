@@ -27,9 +27,10 @@ namespace WebJob1Delete
             }
         }
 
+
         private async void Window_Loaded()
         {
-            #region Поиск файла в проекте
+            #region Поиск HTML файла в проекте 
             string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string htmlPath = Path.Combine(appDirectory, "Web", "WebWindow.html");
 

@@ -38,16 +38,17 @@
                    Text="{Binding TextInTextBlock, UpdateSourceTrigger=PropertyChanged}"/>
 
         <StackPanel Grid.Row="3" Grid.ColumnSpan="1" Orientation="Horizontal" HorizontalAlignment="Stretch">
-            <Button x:Name="WebToWpf" 
-                    Content="Из браузера в WPF" 
-                    HorizontalAlignment="Stretch"
-                    Margin="5"
-                    Command="{Binding SendTextToWpf}"/>
+
             <Button x:Name="WpfToWeb" 
                     Content="Из WPF в браузер" 
                     HorizontalAlignment="Stretch" 
                     Margin="5"
-                    Command="{Binding SendTextToWebView}"/>     
+                    Command="{Binding SendTextToWebView}"/>
+            <Button x:Name="WebToWpf" 
+                    Content="Из браузера в WPF" 
+                    HorizontalAlignment="Stretch"
+                    Margin="5"
+                    Command="{Binding SendTextToWpf}"/>     
         </StackPanel>
 
     </Grid>

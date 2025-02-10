@@ -1,29 +1,41 @@
 ﻿using Microsoft.Web.WebView2.Core;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Windows;
 
 namespace WebJob1Delete.ViewModel
 {
     public class MainViewModel : INotifyPropertyChanged
     {
+        #region Отвлекающий мусор
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        private string _textInWeb = string.Empty;
-        public string TextInWeb
+        private CoreWebView2? _coreWebView;
+        public CoreWebView2? CoreWebView
         {
-            get { return _textInWeb; }
+            get { return _coreWebView; }
             set
             {
-                if (_textInWeb != value)
-                {
-                    _textInWeb = value;
-                    Debug.WriteLine($"TextInWeb изменен: {TextInWeb}");
-                    OnPropertyChanged(nameof(TextInWeb));
-                    SendTextToWpf.RaiseCanExecuteChanged(); // Уведомляем команду о необходимости перепроверки
-                }
+                _coreWebView = value;
+                OnPropertyChanged(nameof(CoreWebView));
             }
         }
+
+        public RelayCommand SendTextToWebView { get; set; }
+        public RelayCommand SendTextToWpf { get; set; }
+
+        private void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public MainViewModel()
+        {
+            SendTextToWebView = new RelayCommand(TextToWebView, CanTextToWebView);
+            SendTextToWpf = new RelayCommand(TextToWpf, CanTextToWpf);
+        }
+        #endregion
+
+        #region Свойства класса
 
         private string _textInTextBox = string.Empty;
         public string TextInTextBox
@@ -38,46 +50,40 @@ namespace WebJob1Delete.ViewModel
                 }
             }
         }
+
         private string _textInTextBlock = string.Empty;
         public string TextInTextBlock
         {
             get { return _textInTextBlock; }
             set
             {
-                if (_textInTextBlock != value) _textInTextBlock = value;
-                OnPropertyChanged(nameof(TextInTextBlock));
+                if (_textInTextBlock != value)
+                {
+                    _textInTextBlock = value;
+                    OnPropertyChanged(nameof(TextInTextBlock));
+                }
             }
         }
 
-        private CoreWebView2? _coreWebView;
-        public CoreWebView2? CoreWebView
+        private string _newTextInWebView = string.Empty;
+
+        public string NewTextInWebView
         {
-            get { return _coreWebView; }
+            get { return _newTextInWebView; }
             set
             {
-                _coreWebView = value;
-                OnPropertyChanged(nameof(CoreWebView));
+                if (_newTextInWebView != value)
+                {
+                    _newTextInWebView = value;
+                    OnPropertyChanged(nameof(NewTextInWebView));
+                    SendTextToWpf.RaiseCanExecuteChanged();
+                }
             }
         }
 
-        public MainViewModel()
-        {
-            SendTextToWebView = new RelayCommand(TextToWebView, CanTextToWebView);
-            SendTextToWpf = new RelayCommand(TextToWpf, CanTextToWpf);
-        }
+        #endregion
 
-        private bool CanTextToWpf(object? obj)
-        {
-            Debug.WriteLine($"CanExecute? {TextInWeb.Length > 0}");
-            //return !string.IsNullOrEmpty(TextInWeb);
-            return true;
-        }
-
-        private void TextToWpf(object? obj)
-        {
-            TextInTextBlock = TextInWeb;
-        }
-
+        #region SendTextToWebView
         private bool CanTextToWebView(object? arg)
         {
             return !string.IsNullOrEmpty(TextInTextBox);
@@ -87,12 +93,26 @@ namespace WebJob1Delete.ViewModel
         {
             if (CoreWebView != null)
             {
-                // Используем функцию setTextFromCSharp, определенную в HTML
-                Debug.WriteLine($"Отправляю в WebView2: {TextInTextBox}");
                 string script = $"setTextFromCSharp('{TextInTextBox}');";
                 await CoreWebView.ExecuteScriptAsync(script);
             }
         }
+
+
+        #endregion
+
+        #region SendTextToWpf
+        private bool CanTextToWpf(object? obj)
+        {
+            return !string.IsNullOrEmpty(NewTextInWebView);
+        }
+
+        private void TextToWpf(object? obj)
+        {
+            TextInTextBlock = NewTextInWebView;
+        }
+
+        #endregion
 
         public void InitializeWebView(CoreWebView2 webView)
         {
@@ -103,15 +123,10 @@ namespace WebJob1Delete.ViewModel
         private void CoreWebView_WebMessageReceived(object? sender, CoreWebView2WebMessageReceivedEventArgs e)
         {
             string textFromWeb = e.WebMessageAsJson.Trim('"');
-            TextInWeb = textFromWeb;
-        }
+            Debug.WriteLine($"Получено сообщение из WebView: {textFromWeb}");
 
-        public RelayCommand SendTextToWebView { get; set; }
-        public RelayCommand SendTextToWpf { get; set; }
-
-        private void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            NewTextInWebView = textFromWeb;
+            SendTextToWpf.RaiseCanExecuteChanged();
         }
     }
 }
