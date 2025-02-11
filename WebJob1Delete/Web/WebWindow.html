@@ -66,6 +66,7 @@
         function setTextFromCSharp(text) {
             let editor = document.getElementById("editor");
             editor.value = text;
+            window.chrome.webview.postMessage(editor.value);
         }
 
         // Функция, отправляющая текст обратно в C#

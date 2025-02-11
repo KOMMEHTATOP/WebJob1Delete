@@ -123,10 +123,7 @@ namespace WebJob1Delete.ViewModel
         private void CoreWebView_WebMessageReceived(object? sender, CoreWebView2WebMessageReceivedEventArgs e)
         {
             string textFromWeb = e.WebMessageAsJson.Trim('"');
-            Debug.WriteLine($"Получено сообщение из WebView: {textFromWeb}");
-
             NewTextInWebView = textFromWeb;
-            SendTextToWpf.RaiseCanExecuteChanged();
         }
     }
 }
